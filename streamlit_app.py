@@ -12,18 +12,18 @@ if 'expenses' not in st.session_state: st.session_state.expenses = []
 # --- Sleep & Timetable (Updated) ---
 st.subheader("🌙 Sleep & Timetable")
 
-# Slider with 12 points (1 to 12 hours)
 st.session_state.sleep_hours = st.slider("How many hours did you sleep?", 1.0, 12.0, st.session_state.sleep_hours, step=1.0)
 
-# Bedtime selector (12-hour format is default on most mobile browsers)
+# Bedtime selector
 bedtime = st.time_input("What time did you go to sleep?", time(22, 0))
 
 # Calculate Wake up time
 dummy_date = datetime.combine(datetime.today(), bedtime)
 wakeup_time = (dummy_date + timedelta(hours=st.session_state.sleep_hours)).time()
 
-st.write(f"### ⏰ Slept at {bedtime.strftime('%I:%M %p')}")
-st.write(f"### ⏰ Woke up at: **{wakeup_time.strftime('%I:%M %p')}**")
+st.write(f"***At what time you go and at what time you woke up!***")
+st.write(f"Going to sleep at: **{bedtime.strftime('%I:%M %p')}**")
+st.write(f"Waking up at: **{wakeup_time.strftime('%I:%M %p')}**")
 
 # --- Learning & Focus ---
 st.subheader("🧠 Learning & Focus")
