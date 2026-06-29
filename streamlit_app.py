@@ -4,24 +4,26 @@ from datetime import datetime, timedelta, time
 st.title("🎯 My Life Dashboard")
 
 # Initialize Memory
-if 'sleep_val' not in st.session_state: st.session_state.sleep_val = 5.0
+if 'sleep_hours' not in st.session_state: st.session_state.sleep_hours = 6.0
 if 'learn_val' not in st.session_state: st.session_state.learn_val = 0.0
 if 'focus_val' not in st.session_state: st.session_state.focus_val = "Average"
 if 'expenses' not in st.session_state: st.session_state.expenses = []
 
-# --- Sleep & Timetable (New Logic) ---
+# --- Sleep & Timetable (Updated) ---
 st.subheader("🌙 Sleep & Timetable")
-st.session_state.sleep_val = st.slider("How was your sleep quality?", 1.0, 10.0, st.session_state.sleep_val)
 
-# Bedtime selector (defaults to 10:00 PM)
-bedtime = st.time_input("What time do you plan to go to sleep?", time(22, 0))
+# Slider with 12 points (1 to 12 hours)
+st.session_state.sleep_hours = st.slider("How many hours did you sleep?", 1.0, 12.0, st.session_state.sleep_hours, step=1.0)
 
-# Calculate Wake up time (+ 6 hours)
-# We convert time to a datetime object, add 6 hours, then convert back to time
+# Bedtime selector (12-hour format is default on most mobile browsers)
+bedtime = st.time_input("What time did you go to sleep?", time(22, 0))
+
+# Calculate Wake up time
 dummy_date = datetime.combine(datetime.today(), bedtime)
-wakeup_time = (dummy_date + timedelta(hours=6)).time()
+wakeup_time = (dummy_date + timedelta(hours=st.session_state.sleep_hours)).time()
 
-st.write(f"### ⏰ If you sleep at {bedtime.strftime('%I:%M %p')}, you should wake up at: **{wakeup_time.strftime('%I:%M %p')}**")
+st.write(f"### ⏰ Slept at {bedtime.strftime('%I:%M %p')}")
+st.write(f"### ⏰ Woke up at: **{wakeup_time.strftime('%I:%M %p')}**")
 
 # --- Learning & Focus ---
 st.subheader("🧠 Learning & Focus")
