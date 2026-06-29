@@ -1,34 +1,37 @@
 import streamlit as st
 
-st.set_page_config(page_title="My Life Dashboard", layout="centered")
-
 st.title("🎯 My Life Dashboard")
 
-# 1. Sleep Tracking
-st.subheader("🌙 Sleep & Timetable")
-sleep_quality = st.select_slider("How was your sleep quality?", options=["Bad", "Okay", "Good", "Great"])
-wake_time = st.time_input("What time did you wake up?")
-
-# 2. Focus/Learning & Reflection
-st.subheader("🧠 Learning & Focus")
-learning_hours = st.slider("Hours spent in Deep Learning:", 0.0, 8.0, 0.0)
-focus_score = st.radio("How was your focus today?", ["Distracted", "Average", "High"])
-
-# --- NEW: Daily Reflection ---
-st.info("💡 Reflection: What is the ONE big thing you learned today?")
-daily_reflection = st.text_area("Write it down here to lock it in your memory:")
-
-# 3. Finance (The "Careless" Fix)
+# --- Finance Section (Upgraded) ---
 st.subheader("💰 Money Wisdom")
-expense_type = st.selectbox("Did you spend money on:", ["Need", "Want", "Waste"])
-if expense_type == "Waste":
-    st.warning("⚠️ Take a breath! Ask yourself: 'Will this matter in 30 days?'")
-amount = st.number_input("Amount spent (₹):", min_value=0)
 
-# 4. Save
-if st.button("Save Daily Progress"):
-    if daily_reflection:
-        st.success("Entry saved! Great work keeping your focus.")
+# Initialize a list to hold expenses in the session
+if 'expenses' not in st.session_state:
+    st.session_state.expenses = []
+
+# Input for new expense
+expense_name = st.text_input("What did you buy?")
+amount = st.number_input("Amount (₹):", min_value=0)
+category = st.selectbox("Type:", ["Need", "Want", "Waste"])
+
+if st.button("Add Expense"):
+    if amount > 0:
+        st.session_state.expenses.append({"item": expense_name, "amount": amount, "type": category})
+        st.success(f"Added {expense_name}")
     else:
-        st.warning("Don't forget to add your reflection before saving!")
-      
+        st.warning("Please enter an amount greater than 0.")
+
+# Show the list
+if st.session_state.expenses:
+    st.write("### Today's Expenses:")
+    total = 0
+    for i, exp in enumerate(st.session_state.expenses):
+        st.write(f"{i+1}. {exp['item']} - ₹{exp['amount']} ({exp['type']})")
+        total += exp['amount']
+    st.write(f"**Total Spent: ₹{total}**")
+    
+    # Warning for Waste
+    waste_total = sum(e['amount'] for e in st.session_state.expenses if e['type'] == "Waste")
+    if waste_total > 0:
+        st.error(f"⚠️ You have spent ₹{waste_total} on 'Waste' today. Stop and think!")
+        
